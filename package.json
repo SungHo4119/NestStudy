@@ -1,0 +1,10 @@
+{
+  "name": "NestStudy",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "index.js",
+  "packageManager": "yarn@4.6.0",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
