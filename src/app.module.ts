@@ -11,6 +11,7 @@ import { PostsModule } from './posts/posts.module';
   imports: [
     PostsModule,
     // TypeOrmModule @nestjs/typeorm
+    // forRoot는 TypeORM - DB연결을 사용할때 사용
     TypeOrmModule.forRoot({
       // 데이터 베이스 타입
       type: 'postgres',

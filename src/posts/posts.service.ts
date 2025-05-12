@@ -1,57 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
-/**
- * author: string;
- * title: string;
- * content: string;
- * likeCount: number;
- * commentCount: number;
- */
-interface PostModel {
-  id: number;
-  author: string;
-  title: string;
-  content: string;
-  likeCount: number;
-  commentCount: number;
-}
-
-let posts: PostModel[] = [
-  {
-    id: 1,
-    author: 'newJeans_Official',
-    title: '뉴진스 민지',
-    content: '메이크업 고치고 있는 민지',
-    likeCount: 100000,
-    commentCount: 5000000,
-  },
-  {
-    id: 2,
-    author: 'newJeans_Official',
-    title: '뉴진스 해린',
-    content: '노래 연습 하고 있는 해린',
-    likeCount: 9999,
-    commentCount: 49999,
-  },
-  {
-    id: 3,
-    author: 'newJeans_Official',
-    title: '뉴진스 로제',
-    content: '운동중인 로제',
-    likeCount: 8888,
-    commentCount: 399999,
-  },
-];
+import { InjectRepository } from '@nestjs/typeorm';
+import { PostModel } from 'src/posts/entities/post.entity';
+import { Repository } from 'typeorm';
 // Injectable: 주입 할 수 있다.
 // module에 사용하기 위해서는 @Injectable()을 작성 해 주어야한다.
 @Injectable()
 export class PostsService {
-  getAllPosts(): PostModel[] {
+  constructor(
+    // @nestjs/typeorm
+    @InjectRepository(PostModel)
+    private readonly postsRepository: Repository<PostModel>,
+  ) {}
+
+  async getAllPosts(): Promise<PostModel[]> {
+    const posts = await this.postsRepository.find();
     return posts;
   }
 
-  getPostById(id: number): PostModel {
-    const post = posts.find((post) => post.id === id);
+  async getPostById(id: number): Promise<PostModel> {
+    const post = await this.postsRepository.findOne({
+      where: { id },
+    });
+
     if (!post) {
       // NotFoundException - NestJS에서 기본으로 제공하는 에러 타입
       throw new NotFoundException();
@@ -60,21 +30,38 @@ export class PostsService {
     return post;
   }
 
-  createPost(author: string, title: string, content: string) {
-    const post: PostModel = {
-      id: posts[posts.length - 1].id + 1,
-      author: author,
-      title: title,
-      content: content,
+  async createPost(
+    author: string,
+    title: string,
+    content: string,
+  ): Promise<PostModel> {
+    const post: PostModel = this.postsRepository.create({
+      author,
+      title,
+      content,
       likeCount: 0,
       commentCount: 0,
-    };
-    posts = [...posts, post];
-    return post;
+    });
+
+    // save의 기능
+    // 1) id값이 같은 데이터가(혹은 id값이 없는경우) 존재하지 않는다면 새로 생성한다.
+    // 2) id값이 존재하고 같은 id값을 가진 데이터가 존재한다면 객체를 저장한다.
+    const newPost = await this.postsRepository.save(post);
+    return newPost;
   }
 
-  updatePost(id: number, author?: string, title?: string, content?: string) {
-    const post: PostModel | undefined = posts.find((post) => post.id === id);
+  async updatePost(
+    id: number,
+    author?: string,
+    title?: string,
+    content?: string,
+  ): Promise<PostModel> {
+    const post = await this.postsRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
     if (!post) {
       throw new NotFoundException();
     }
@@ -89,20 +76,22 @@ export class PostsService {
       post.content = content;
     }
 
-    posts = posts.map((prvePost: PostModel) =>
-      prvePost.id === id ? post : prvePost,
-    );
+    const newPost = await this.postsRepository.save(post);
 
-    return post;
+    return newPost;
   }
 
-  deletePost(id: number) {
-    const post: PostModel | undefined = posts.find((post) => post.id === +id);
+  async deletePost(id: number): Promise<number> {
+    const post = await this.postsRepository.findOne({
+      where: {
+        id,
+      },
+    });
     if (!post) {
       throw new NotFoundException();
     }
 
-    posts = posts.filter((post) => post.id !== +id);
+    await this.postsRepository.delete(id);
 
     return id;
   }

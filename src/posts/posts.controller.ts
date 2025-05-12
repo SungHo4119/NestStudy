@@ -22,7 +22,7 @@ export class PostsController {
    * 모든 포스트를 가져오는 API
    */
   @Get('')
-  getPosts(): PostsModule[] {
+  getPosts(): Promise<PostsModule[]> {
     return this.postsService.getAllPosts();
   }
 
@@ -31,7 +31,7 @@ export class PostsController {
    * 특정 포스트를 가져오는 API
    */
   @Get(':id')
-  getPost(@Param('id') id: number): PostsModule {
+  getPost(@Param('id') id: number): Promise<PostsModule> {
     return this.postsService.getPostById(+id);
   }
   /**
@@ -39,11 +39,11 @@ export class PostsController {
    * 포스트를 생성하는 API
    */
   @Post()
-  postPost(
+  cpostPost(
     @Body('author') author: string,
     @Body('title') title: string,
     @Body('content') content: string,
-  ): PostsModule {
+  ): Promise<PostsModule> {
     return this.postsService.createPost(author, title, content);
   }
 
@@ -57,7 +57,7 @@ export class PostsController {
     @Body('author') author?: string,
     @Body('title') title?: string,
     @Body('content') content?: string,
-  ): PostsModule {
+  ): Promise<PostsModule> {
     return this.postsService.updatePost(+id, author, title, content);
   }
 
@@ -67,7 +67,7 @@ export class PostsController {
    */
 
   @Delete(':id')
-  deletePost(@Param('id') id: string): number {
+  deletePost(@Param('id') id: string): Promise<number> {
     return this.postsService.deletePost(+id);
   }
 }
