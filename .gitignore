@@ -136,4 +136,4 @@ dist
 .pnp.*
 
 # Postgres data files
-.postgres-data/
+postgres-data/
