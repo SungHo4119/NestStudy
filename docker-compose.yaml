@@ -1,0 +1,17 @@
+# 실행 : docker-compose up
+services:
+  postgres:
+    image: postgres:17.5
+    # 항상 재시작
+    restart: always
+    volumes:
+      # 호스트의 ./postgres-data 디렉토리를 컨테이너의 /var/lib/postgresql/data에 마운트
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      # 컨테이너의 5432 포트를 호스트의 5432 포트에 매핑
+      - '5432:5432'
+    environment:
+      # PostgreSQL 데이터베이스 초기화에 필요한 환경 변수 설정
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
