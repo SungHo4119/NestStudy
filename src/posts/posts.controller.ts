@@ -14,6 +14,7 @@ import { PostsService } from './posts.service';
 
 @Controller('posts')
 export class PostsController {
+  // postsService의 객체는 NestJS의 IoC Container에서 가져온다.
   constructor(private readonly postsService: PostsService) {}
 
   /**

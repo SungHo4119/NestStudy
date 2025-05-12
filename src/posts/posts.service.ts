@@ -42,7 +42,8 @@ let posts: PostModel[] = [
     commentCount: 399999,
   },
 ];
-
+// Injectable: 주입 할 수 있다.
+// module에 사용하기 위해서는 @Injectable()을 작성 해 주어야한다.
 @Injectable()
 export class PostsService {
   getAllPosts(): PostModel[] {

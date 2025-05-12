@@ -16,5 +16,6 @@ node: v23.9.0
 npm: 10.9.2
 yarn: 1.22.22
 nest: 11.07.7
+docker: 27.3.1, build ce12230
 
 ## Lib
