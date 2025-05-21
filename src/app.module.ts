@@ -11,6 +11,9 @@ import {
   TempStudentModel,
   TempTeacherModel,
 } from 'src/entity/temp.persion.entity';
+import { TempPostModel } from 'src/entity/temp.post.entity';
+import { TempProfileModel } from 'src/entity/temp.profile.entity';
+import { TempTagModel } from 'src/entity/temp.tag.entity';
 import { TempUserModel } from 'src/entity/temp.user.entity';
 import { PostModel } from 'src/posts/entities/post.entity';
 import { AppController } from './app.controller';
@@ -27,6 +30,9 @@ import { PostsModule } from './posts/posts.module';
       TempUserModel,
       TempStudentModel,
       TempTeacherModel,
+      TempProfileModel,
+      TempPostModel,
+      TempTagModel,
     ]),
     // TypeOrmModule @nestjs/typeorm
     // forRoot는 TypeORM - DB연결을 사용할때 사용
@@ -47,6 +53,9 @@ import { PostsModule } from './posts/posts.module';
         TempSingleBaseModel,
         ComputerModel,
         AirplanceModel,
+        TempProfileModel,
+        TempPostModel,
+        TempTagModel,
       ],
       // 개발시 true - 동기화 옵션(entities에 따라 테이블 바뀜)
       synchronize: true,
