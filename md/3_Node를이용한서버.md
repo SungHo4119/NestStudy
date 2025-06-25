@@ -8,3 +8,7 @@
 
 - express설치를 위해 yarn add express를 사용 하였는데 pnp.cjs가 생성되었다.(추후 별도로 공부 해야할듯) - 설치하지않는 패키지
   - Node_modules가 생성 되지않아 찾아보니 `yarn config set nodeLinker node-modules` 사용하는 경우 node_modules가 사용가능하도록 변경되고 `yarn install`를 통해 설치를 진행한다.
+
+## Nest 리소스 생성방법
+
+- npx nest g resource

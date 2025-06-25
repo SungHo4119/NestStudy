@@ -1,24 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  AirplanceModel,
-  ComputerModel,
-  TempBookModel,
-  TempCarModel,
-  TempSingleBaseModel,
-} from 'src/entity/temp.inheritance.entity';
-import {
-  TempStudentModel,
-  TempTeacherModel,
-} from 'src/entity/temp.persion.entity';
-import { TempPostModel } from 'src/entity/temp.post.entity';
-import { TempProfileModel } from 'src/entity/temp.profile.entity';
-import { TempTagModel } from 'src/entity/temp.tag.entity';
-import { TempUserModel } from 'src/entity/temp.user.entity';
 import { PostModel } from 'src/posts/entities/post.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
+import { UsersModule } from './users/users.module';
 
 // NestJS의 모듈을 정의하는 파일 ( 의존성 정의 )
 @Module({
@@ -26,14 +12,7 @@ import { PostsModule } from './posts/posts.module';
   imports: [
     PostsModule,
     // TypeORM 테스트를 위한 모델
-    TypeOrmModule.forFeature([
-      TempUserModel,
-      TempStudentModel,
-      TempTeacherModel,
-      TempProfileModel,
-      TempPostModel,
-      TempTagModel,
-    ]),
+    TypeOrmModule.forFeature([]),
     // TypeOrmModule @nestjs/typeorm
     // forRoot는 TypeORM - DB연결을 사용할때 사용
     TypeOrmModule.forRoot({
@@ -43,23 +22,11 @@ import { PostsModule } from './posts/posts.module';
       port: 5432,
       username: 'postgres',
       password: 'postgres',
-      entities: [
-        PostModel,
-        TempUserModel,
-        TempStudentModel,
-        TempTeacherModel,
-        TempBookModel,
-        TempCarModel,
-        TempSingleBaseModel,
-        ComputerModel,
-        AirplanceModel,
-        TempProfileModel,
-        TempPostModel,
-        TempTagModel,
-      ],
+      entities: [PostModel],
       // 개발시 true - 동기화 옵션(entities에 따라 테이블 바뀜)
       synchronize: true,
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
