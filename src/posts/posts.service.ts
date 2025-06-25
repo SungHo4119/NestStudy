@@ -13,13 +13,16 @@ export class PostsService {
   ) {}
 
   async getAllPosts(): Promise<PostModel[]> {
-    const posts = await this.postsRepository.find();
+    const posts = await this.postsRepository.find({
+      relations: ['author'],
+    });
     return posts;
   }
 
   async getPostById(id: number): Promise<PostModel> {
     const post = await this.postsRepository.findOne({
       where: { id },
+      relations: ['author'],
     });
 
     if (!post) {
@@ -31,12 +34,14 @@ export class PostsService {
   }
 
   async createPost(
-    author: string,
+    authorId: number,
     title: string,
     content: string,
   ): Promise<PostModel> {
     const post: PostModel = this.postsRepository.create({
-      author,
+      author: {
+        id: authorId,
+      },
       title,
       content,
       likeCount: 0,
@@ -52,7 +57,6 @@ export class PostsService {
 
   async updatePost(
     id: number,
-    author?: string,
     title?: string,
     content?: string,
   ): Promise<PostModel> {
@@ -60,15 +64,13 @@ export class PostsService {
       where: {
         id,
       },
+      relations: ['author'],
     });
 
     if (!post) {
       throw new NotFoundException();
     }
 
-    if (author) {
-      post.author = author;
-    }
     if (title) {
       post.title = title;
     }

@@ -39,12 +39,12 @@ export class PostsController {
    * 포스트를 생성하는 API
    */
   @Post()
-  cpostPost(
-    @Body('author') author: string,
+  postPost(
+    @Body('authorId') authorId: number,
     @Body('title') title: string,
     @Body('content') content: string,
   ): Promise<PostsModule> {
-    return this.postsService.createPost(author, title, content);
+    return this.postsService.createPost(authorId, title, content);
   }
 
   /**
@@ -54,11 +54,10 @@ export class PostsController {
   @Put(':id')
   putPost(
     @Param('id') id: string,
-    @Body('author') author?: string,
     @Body('title') title?: string,
     @Body('content') content?: string,
   ): Promise<PostsModule> {
-    return this.postsService.updatePost(+id, author, title, content);
+    return this.postsService.updatePost(+id, title, content);
   }
 
   /**

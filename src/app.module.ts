@@ -5,12 +5,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
+import { UserModel } from './users/entities/users.entity';
 
 // NestJS의 모듈을 정의하는 파일 ( 의존성 정의 )
 @Module({
   // 다른 모듈을 불러올 때 사용
   imports: [
     PostsModule,
+    UsersModule,
     // TypeORM 테스트를 위한 모델
     TypeOrmModule.forFeature([]),
     // TypeOrmModule @nestjs/typeorm
@@ -22,11 +24,10 @@ import { UsersModule } from './users/users.module';
       port: 5432,
       username: 'postgres',
       password: 'postgres',
-      entities: [PostModel],
+      entities: [PostModel, UserModel],
       // 개발시 true - 동기화 옵션(entities에 따라 테이블 바뀜)
       synchronize: true,
     }),
-    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
