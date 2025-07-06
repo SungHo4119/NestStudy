@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  NotFoundException,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { Controller } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()

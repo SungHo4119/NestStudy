@@ -12,3 +12,7 @@
 ## Nest 리소스 생성방법
 
 - npx nest g resource
+
+## Nest 실행 방법
+
+- start:dev
