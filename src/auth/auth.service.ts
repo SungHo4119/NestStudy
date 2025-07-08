@@ -1,15 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
+  HASH_ROUNDS,
   JWT_ACCESS_EXPIRATION,
   JWT_REFRESH_EXPIRATION,
-  JWT_SECRET,
 } from 'src/auth/const/auth.const';
 import { UserModel } from 'src/users/entities/users.entity';
+import { UsersService } from 'src/users/users.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {}
   /**
    * 만드려는 기능
    * 1) registerWithEmail
@@ -49,10 +54,66 @@ export class AuthService {
     };
 
     return this.jwtService.sign(payload, {
-      secret: JWT_SECRET,
       expiresIn: isRefreshToken
         ? JWT_REFRESH_EXPIRATION
         : JWT_ACCESS_EXPIRATION,
     });
+  }
+
+  loginUser(user: Pick<UserModel, 'email' | 'id'>) {
+    return {
+      accessToken: this.signToken(user, false),
+      refreshToken: this.signToken(user, true),
+    };
+  }
+
+  async authenticateWithEmailAndPassword(email: string, password: string) {
+    /**
+     *   1. 사용자가 존재하는지 확인 (email)
+     *   2. 비밀번호가 일치하는지 확인
+     *   3. 모두 통과되면 찾은 사용자 정보 반환
+     *   4. loginWithEmail에서 반환된 데이터를 기반으로 토큰 생성
+     */
+    const existingUser = await this.usersService.getUserByEmail(email);
+
+    if (!existingUser) {
+      throw new UnauthorizedException('존재하지 않는 사용자 입니다.');
+    }
+
+    /**
+     * 파라미터
+     *
+     * 1) 입력된 비밀번호
+     * 2) 기존 해시 (hash) -> 사용자 정보에 저장되어 있는 hash
+     */
+    const passOk = await bcrypt.compare(password, existingUser.password);
+
+    if (!passOk) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+
+    return existingUser;
+  }
+
+  async loginWithEmail(user: Pick<UserModel, 'email' | 'password'>) {
+    const existingUser = await this.authenticateWithEmailAndPassword(
+      user.email,
+      user.password,
+    );
+
+    return this.loginUser(existingUser);
+  }
+
+  async registerWithEmail(
+    user: Pick<UserModel, 'nickname' | 'email' | 'password'>,
+  ) {
+    const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
+
+    const newUser = await this.usersService.createUser({
+      ...user,
+      password: hash,
+    });
+
+    return this.loginUser(newUser);
   }
 }
