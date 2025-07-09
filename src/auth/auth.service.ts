@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import {
   HASH_ROUNDS,
   JWT_ACCESS_EXPIRATION,
@@ -7,7 +8,6 @@ import {
 } from 'src/auth/const/auth.const';
 import { UserModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +15,66 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
   ) {}
+  /**
+   * 토큰을 사용하게 되는 방식
+   *
+   * 1) 사용자가 로그인 또는 회원가입을 진행하면 accsessToken과 refreshToekn을 발급받는다.
+   * 2) 로그인 할 때는 Basic 토큰과 함께 요청을 보낸다. Basic 토큰은 '이메일:비밀번호'를 인코딩 한 상태이다.
+   *   - 예) {authorization: 'Basic <BasicToken>'}
+   * 3) 아무나 접근 할 수 없는 정보( private route)를 접근 할떄는 accessToken을 Header에 추가해서 요청과 함께 보낸다.
+   *   - 예) {authorization: 'Bearer <accessToken>'}
+   * 4) 토큰 요청을 함께 받은 서버는 토큰 검증을 통해 현재 요청을 보낸 사용자가 누구인지 알 수 있다.
+   *   - 예를들어서 현재 로그인한 사용자가 작성한 포스트만 가져오려면 토큰의  sub 값에 입력돼 있는 사용자의 포스트만 따로 필터링 할 수 있다.
+   *   - 특정 사용자의 토큰이 없다면 다른 사용자의 데이터를 접근 못한다.
+   *
+   * 5) 모든 토큰은 만료 기간이 있다. 만료기간이 지나면 새로 토큰을 발급받아야한다.
+   *   - 그렇지 않으면 jwtService.verify()에서 인증이 통과 안된다.
+   *   - refresh 토큰을 새로 발급 받을 수 있는 /auth/token/refresh가 필요하다
+   *   - access 토큰이 만료되면 새로 발급 받을 수 있는 /auth/token/access가 필요하다
+   */
+  /**
+   * Header로 부터 토큰을 받을 때 토큰 형식
+   * 1) Basic 토큰
+   *   - 예) {authorization: 'Basic <BasicToken>'}
+   * 2) Bearer 토큰
+   *   - 예) {authorization: 'Bearer <accessToken>'}
+   * 3) 토큰 형식
+   *   - 예) {authorization: 'Bearer <accessToken>'}
+   * 1~3을 파싱하는 메서드 필요
+   */
+  extractTokenFromHeader(header: string, isBearer: boolean) {
+    const splitToken = header.split(' ');
+
+    const prefix = isBearer ? 'Bearer' : 'Basic';
+
+    if (splitToken.length !== 2 || splitToken[0] !== prefix) {
+      throw new UnauthorizedException(
+        '잘못된 유형의 토큰입니다.잘못된 유형의 토큰입니다.',
+      );
+    }
+
+    const token = splitToken[1];
+
+    return token;
+  }
+
+  /**
+   * Basic 토큰을 디코딩하는 메서드
+   * 1) 토큰을 email:password 형식으로 디코딩
+   * 2) email:password를 [email, password] 형식으로 반환
+   * 3) return { eamil, password }
+   */
+  decodeBasicToken(base64String: string) {
+    const decode = Buffer.from(base64String, 'base64').toString('utf-8');
+
+    const split = decode.split(':');
+
+    if (split.length !== 2) {
+      throw new UnauthorizedException('잘못된 유형의 토큰입니다.');
+    }
+
+    return { email: split[0], password: split[1] };
+  }
   /**
    * 만드려는 기능
    * 1) registerWithEmail
