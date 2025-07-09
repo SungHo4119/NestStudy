@@ -1,20 +1,12 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Unique,
-} from 'typeorm';
-import { RolesEnum } from '../const/roles.const';
+import { BaseModel } from 'src/common/entity/base.entity';
 import { PostModel } from 'src/posts/entities/post.entity';
+import { Column, Entity, OneToMany, Unique } from 'typeorm';
+import { RolesEnum } from '../const/roles.const';
 
 @Entity()
 @Unique(['email'])
 @Unique(['nickname'])
-export class UserModel {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class UserModel extends BaseModel {
   @Column({
     length: 20,
   })

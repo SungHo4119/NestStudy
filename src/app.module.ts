@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
 import { UserModel } from './users/entities/users.entity';
 import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
 
 // NestJS의 모듈을 정의하는 파일 ( 의존성 정의 )
 @Module({
@@ -30,6 +31,7 @@ import { UsersModule } from './users/users.module';
     PostsModule,
     UsersModule,
     AuthModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
