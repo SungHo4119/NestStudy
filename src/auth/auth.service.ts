@@ -75,6 +75,33 @@ export class AuthService {
 
     return { email: split[0], password: split[1] };
   }
+
+  verifyToken(token: string) {
+    return this.jwtService.verify(token, {
+      secret: process.env.JWT_SECRET,
+      // ignoreExpiration: false, // 만료된 토큰은 검증하지 않음
+    });
+  }
+
+  rotateToken(token: string, isRefreshToken: boolean) {
+    const decode = this.jwtService.verify(token, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    /**
+     * sub: id
+     * email: email
+     * type: access | refresh
+     */
+    if (decode.type !== 'refresh') {
+      throw new UnauthorizedException(
+        '토큰 재발급은 refresh 토큰만 가능합니다.',
+      );
+    }
+
+    return this.signToken({ ...decode }, isRefreshToken);
+  }
+
   /**
    * 만드려는 기능
    * 1) registerWithEmail

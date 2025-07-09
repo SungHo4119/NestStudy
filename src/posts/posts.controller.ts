@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -31,8 +32,8 @@ export class PostsController {
    * 특정 포스트를 가져오는 API
    */
   @Get(':id')
-  getPost(@Param('id') id: number): Promise<PostsModule> {
-    return this.postsService.getPostById(+id);
+  getPost(@Param('id', ParseIntPipe) id: number): Promise<PostsModule> {
+    return this.postsService.getPostById(id);
   }
   /**
    * Post /posts
@@ -40,7 +41,7 @@ export class PostsController {
    */
   @Post()
   postPost(
-    @Body('authorId') authorId: number,
+    @Body('authorId', ParseIntPipe) authorId: number,
     @Body('title') title: string,
     @Body('content') content: string,
   ): Promise<PostsModule> {
@@ -53,11 +54,11 @@ export class PostsController {
    */
   @Put(':id')
   putPost(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body('title') title?: string,
     @Body('content') content?: string,
   ): Promise<PostsModule> {
-    return this.postsService.updatePost(+id, title, content);
+    return this.postsService.updatePost(id, title, content);
   }
 
   /**
@@ -66,7 +67,7 @@ export class PostsController {
    */
 
   @Delete(':id')
-  deletePost(@Param('id') id: string): Promise<number> {
-    return this.postsService.deletePost(+id);
+  deletePost(@Param('id', ParseIntPipe) id: number): Promise<number> {
+    return this.postsService.deletePost(id);
   }
 }
