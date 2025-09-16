@@ -6,7 +6,7 @@ import {
   JWT_ACCESS_EXPIRATION,
   JWT_REFRESH_EXPIRATION,
 } from 'src/auth/const/auth.const';
-import { UserModel } from 'src/users/entities/users.entity';
+import { UsersModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -77,10 +77,14 @@ export class AuthService {
   }
 
   verifyToken(token: string) {
-    return this.jwtService.verify(token, {
-      secret: process.env.JWT_SECRET,
-      // ignoreExpiration: false, // 만료된 토큰은 검증하지 않음
-    });
+    try {
+      return this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+        // ignoreExpiration: false, // 만료된 토큰은 검증하지 않음
+      });
+    } catch {
+      throw new UnauthorizedException('토큰이 만료됐거나 잘못된 토큰입니다.');
+    }
   }
 
   rotateToken(token: string, isRefreshToken: boolean) {
@@ -133,7 +137,7 @@ export class AuthService {
    * 2) sub (사용자 ID)
    * 3) type: 'access' | 'refresh'
    */
-  signToken(user: Pick<UserModel, 'email' | 'id'>, isRefreshToken: boolean) {
+  signToken(user: Pick<UsersModel, 'email' | 'id'>, isRefreshToken: boolean) {
     const payload = {
       email: user.email,
       sub: user.id,
@@ -147,7 +151,7 @@ export class AuthService {
     });
   }
 
-  loginUser(user: Pick<UserModel, 'email' | 'id'>) {
+  loginUser(user: Pick<UsersModel, 'email' | 'id'>) {
     return {
       accessToken: this.signToken(user, false),
       refreshToken: this.signToken(user, true),
@@ -182,7 +186,7 @@ export class AuthService {
     return existingUser;
   }
 
-  async loginWithEmail(user: Pick<UserModel, 'email' | 'password'>) {
+  async loginWithEmail(user: Pick<UsersModel, 'email' | 'password'>) {
     const existingUser = await this.authenticateWithEmailAndPassword(
       user.email,
       user.password,
@@ -192,7 +196,7 @@ export class AuthService {
   }
 
   async registerWithEmail(
-    user: Pick<UserModel, 'nickname' | 'email' | 'password'>,
+    user: Pick<UsersModel, 'nickname' | 'email' | 'password'>,
   ) {
     const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
 

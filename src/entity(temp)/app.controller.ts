@@ -10,23 +10,23 @@
 // import { InjectRepository } from '@nestjs/typeorm';
 // import { AppService } from 'src/app.service';
 // import { MoreThan, Repository } from 'typeorm';
-// import { TempPostModel } from './temp.post.entity';
+// import { TempPostsModel } from './temp.post.entity';
 // import { TempProfileModel } from './temp.profile.entity';
 // import { TempTagModel } from './temp.tag.entity';
-// import { TempUserModel, Role } from './temp.user.entity';
+// import { TempUsersModel, Role } from './temp.user.entity';
 
 // @Controller()
 // export class AppController {
 //   constructor(
 //     private readonly appService: AppService,
-//     @InjectRepository(TempUserModel)
-//     private readonly tempUserRepository: Repository<TempUserModel>,
+//     @InjectRepository(TempUsersModel)
+//     private readonly tempUserRepository: Repository<TempUsersModel>,
 
 //     @InjectRepository(TempProfileModel)
 //     private readonly tempProfileRepository: Repository<TempProfileModel>,
 
-//     @InjectRepository(TempPostModel)
-//     private readonly tempPostRepository: Repository<TempPostModel>,
+//     @InjectRepository(TempPostsModel)
+//     private readonly tempPostRepository: Repository<TempPostsModel>,
 
 //     @InjectRepository(TempTagModel)
 //     private readonly tempTagRepository: Repository<TempTagModel>,
@@ -116,7 +116,7 @@
 //   }
 
 //   @Post('temp/user/profile')
-//   async createUserAndProfile(): Promise<TempUserModel> {
+//   async createUserAndProfile(): Promise<TempUsersModel> {
 //     const user = await this.tempUserRepository.save({
 //       email: 'dev@example.com',
 //     });
@@ -136,7 +136,7 @@
 //   }
 
 //   @Post('temp/user/post')
-//   async createUserAndPost(): Promise<TempUserModel> {
+//   async createUserAndPost(): Promise<TempUsersModel> {
 //     const user = await this.tempUserRepository.save({
 //       email: 'dev@example.com',
 //     });

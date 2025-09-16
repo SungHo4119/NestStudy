@@ -1,12 +1,12 @@
 import { BaseModel } from 'src/common/entity/base.entity';
-import { PostModel } from 'src/posts/entities/post.entity';
+import { PostsModel } from 'src/posts/entities/post.entity';
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
 
 @Entity()
 @Unique(['email'])
 @Unique(['nickname'])
-export class UserModel extends BaseModel {
+export class UsersModel extends BaseModel {
   @Column({
     length: 20,
   })
@@ -24,6 +24,6 @@ export class UserModel extends BaseModel {
   })
   role: RolesEnum;
 
-  @OneToMany(() => PostModel, (post) => post.author)
-  posts: PostModel[];
+  @OneToMany(() => PostsModel, (post) => post.author)
+  posts: PostsModel[];
 }

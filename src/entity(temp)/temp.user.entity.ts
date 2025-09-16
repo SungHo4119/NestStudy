@@ -1,4 +1,4 @@
-// import { TempPostModel } from 'src/entity/temp.post.entity';
+// import { TempPostsModel } from 'src/entity/temp.post.entity';
 // import { TempProfileModel } from 'src/entity/temp.profile.entity';
 // import {
 //   Column,
@@ -26,7 +26,7 @@
 //   ADMIN = 'admin',
 // }
 // @Entity({ schema: 'public', name: 'temp_users' })
-// export class TempUserModel {
+// export class TempUsersModel {
 //   /**
 //    * 자동으로 ID를 생성한다.
 //    * PrimaryGeneratedColumn
@@ -134,8 +134,8 @@
 //   @JoinColumn()
 //   profile: TempProfileModel;
 
-//   @OneToMany(() => TempPostModel, (post) => post.author)
-//   posts: TempPostModel[];
+//   @OneToMany(() => TempPostsModel, (post) => post.author)
+//   posts: TempPostsModel[];
 
 //   @Column({
 //     default: 0,

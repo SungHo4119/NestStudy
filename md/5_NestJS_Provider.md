@@ -111,23 +111,23 @@ Service는 **비즈니스 로직을 처리**하는 Provider입니다. 데이터�
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PostModel } from './entities/post.entity';
+import { PostsModel } from './entities/post.entity';
 
 @Injectable() // Provider로 등록 가능하게 만드는 데코레이터
 export class PostsService {
   constructor(
     // Repository 주입 - TypeORM을 통한 데이터베이스 접근
-    @InjectRepository(PostModel)
-    private readonly postsRepository: Repository<PostModel>,
+    @InjectRepository(PostsModel)
+    private readonly postsRepository: Repository<PostsModel>,
   ) {}
 
   // 모든 포스트 조회
-  async getAllPosts(): Promise<PostModel[]> {
+  async getAllPosts(): Promise<PostsModel[]> {
     return await this.postsRepository.find();
   }
 
   // ID로 특정 포스트 조회
-  async getPostById(id: number): Promise<PostModel> {
+  async getPostById(id: number): Promise<PostsModel> {
     const post = await this.postsRepository.findOne({
       where: { id },
     });
@@ -144,7 +144,7 @@ export class PostsService {
     author: string,
     title: string,
     content: string,
-  ): Promise<PostModel> {
+  ): Promise<PostsModel> {
     const post = this.postsRepository.create({
       author,
       title,
@@ -162,7 +162,7 @@ export class PostsService {
     author?: string,
     title?: string,
     content?: string,
-  ): Promise<PostModel> {
+  ): Promise<PostsModel> {
     const post = await this.getPostById(id);
 
     if (author) post.author = author;
@@ -200,14 +200,14 @@ Module은 **관련된 Controller, Service, Provider들을 묶어 관리**하는 
 ```typescript
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PostModel } from './entities/post.entity';
+import { PostsModel } from './entities/post.entity';
 import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
 
 @Module({
   imports: [
-    // TypeORM 모듈에서 PostModel Entity 사용
-    TypeOrmModule.forFeature([PostModel]),
+    // TypeORM 모듈에서 PostsModel Entity 사용
+    TypeOrmModule.forFeature([PostsModel]),
   ],
   // HTTP 요청을 처리할 Controller 등록
   controllers: [PostsController],

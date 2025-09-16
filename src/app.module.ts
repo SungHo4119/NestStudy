@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PostModel } from 'src/posts/entities/post.entity';
+import { PostsModel } from 'src/posts/entities/post.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { PostsModule } from './posts/posts.module';
-import { UserModel } from './users/entities/users.entity';
-import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
+import { PostsModule } from './posts/posts.module';
+import { UsersModel } from './users/entities/users.entity';
+import { UsersModule } from './users/users.module';
 
 // NestJS의 모듈을 정의하는 파일 ( 의존성 정의 )
 @Module({
@@ -24,7 +24,7 @@ import { CommonModule } from './common/common.module';
       port: 5432,
       username: 'postgres',
       password: 'postgres',
-      entities: [PostModel, UserModel],
+      entities: [PostsModel, UsersModel],
       // 개발시 true - 동기화 옵션(entities에 따라 테이블 바뀜)
       synchronize: true,
     }),

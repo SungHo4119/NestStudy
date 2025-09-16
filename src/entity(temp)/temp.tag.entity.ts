@@ -1,4 +1,4 @@
-// import { TempPostModel } from 'src/entity/temp.post.entity';
+// import { TempPostsModel } from 'src/entity/temp.post.entity';
 // import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 // @Entity({ name: 'temp_tag' })
@@ -6,8 +6,8 @@
 //   @PrimaryGeneratedColumn()
 //   id: number;
 
-//   @ManyToMany(() => TempPostModel, (post) => post.tags)
-//   posts: TempPostModel[];
+//   @ManyToMany(() => TempPostsModel, (post) => post.tags)
+//   posts: TempPostsModel[];
 
 //   @Column()
 //   name: string;

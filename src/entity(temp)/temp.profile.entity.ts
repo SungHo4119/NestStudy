@@ -1,4 +1,4 @@
-// import { TempUserModel } from 'src/entity/temp.user.entity';
+// import { TempUsersModel } from 'src/entity/temp.user.entity';
 // import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 // @Entity({ name: 'temp_profile' })
@@ -6,8 +6,8 @@
 //   @PrimaryGeneratedColumn()
 //   id: number;
 
-//   @OneToOne(() => TempUserModel, (user) => user.profile)
-//   user: TempUserModel;
+//   @OneToOne(() => TempUsersModel, (user) => user.profile)
+//   user: TempUsersModel;
 
 //   @Column()
 //   profileImg: string;

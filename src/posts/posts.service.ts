@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PostModel } from 'src/posts/entities/post.entity';
+import { PostsModel } from 'src/posts/entities/post.entity';
 import { Repository } from 'typeorm';
 // Injectable: 주입 할 수 있다.
 // module에 사용하기 위해서는 @Injectable()을 작성 해 주어야한다.
@@ -8,18 +8,18 @@ import { Repository } from 'typeorm';
 export class PostsService {
   constructor(
     // @nestjs/typeorm
-    @InjectRepository(PostModel)
-    private readonly postsRepository: Repository<PostModel>,
+    @InjectRepository(PostsModel)
+    private readonly postsRepository: Repository<PostsModel>,
   ) {}
 
-  async getAllPosts(): Promise<PostModel[]> {
+  async getAllPosts(): Promise<PostsModel[]> {
     const posts = await this.postsRepository.find({
       relations: ['author'],
     });
     return posts;
   }
 
-  async getPostById(id: number): Promise<PostModel> {
+  async getPostById(id: number): Promise<PostsModel> {
     const post = await this.postsRepository.findOne({
       where: { id },
       relations: ['author'],
@@ -37,8 +37,8 @@ export class PostsService {
     authorId: number,
     title: string,
     content: string,
-  ): Promise<PostModel> {
-    const post: PostModel = this.postsRepository.create({
+  ): Promise<PostsModel> {
+    const post: PostsModel = this.postsRepository.create({
       author: {
         id: authorId,
       },
@@ -59,7 +59,7 @@ export class PostsService {
     id: number,
     title?: string,
     content?: string,
-  ): Promise<PostModel> {
+  ): Promise<PostsModel> {
     const post = await this.postsRepository.findOne({
       where: {
         id,

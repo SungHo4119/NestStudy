@@ -1,16 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserModel } from './entities/users.entity';
 import { Repository } from 'typeorm';
+import { UsersModel } from './entities/users.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UserModel)
-    private readonly userRepository: Repository<UserModel>,
+    @InjectRepository(UsersModel)
+    private readonly userRepository: Repository<UsersModel>,
   ) {}
 
-  async createUser(user: Pick<UserModel, 'nickname' | 'email' | 'password'>) {
+  async createUser(user: Pick<UsersModel, 'nickname' | 'email' | 'password'>) {
     // 1) nickname 중복확인
     const nicknameExists = await this.userRepository.exists({
       where: {
