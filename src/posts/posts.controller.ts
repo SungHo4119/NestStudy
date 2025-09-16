@@ -12,7 +12,6 @@ import {
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { PostsModule } from 'src/posts/posts.module';
 import { User } from 'src/users/decorator/user.decorator';
-import { UsersModel } from 'src/users/entities/users.entity';
 import { PostsService } from './posts.service';
 
 // nest g resource 를 이용해서 모듈을 생성 할 수 있다.
@@ -46,11 +45,11 @@ export class PostsController {
   @Post()
   @UseGuards(AccessTokenGuard)
   postPost(
-    @User('id') user: UsersModel,
+    @User('id') userId: number,
     @Body('title') title: string,
     @Body('content') content: string,
   ): Promise<PostsModule> {
-    const authorId = user.id;
+    const authorId = userId;
     return this.postsService.createPost(authorId, title, content);
   }
 
