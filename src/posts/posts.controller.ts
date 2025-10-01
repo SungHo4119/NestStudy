@@ -5,11 +5,13 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { CreatePostDto } from 'src/posts/dto/create-post.dto';
+import { UpdatePostDto } from 'src/posts/dto/update-post.dto';
 import { PostsModule } from 'src/posts/posts.module';
 import { User } from 'src/users/decorator/user.decorator';
 import { PostsService } from './posts.service';
@@ -46,24 +48,24 @@ export class PostsController {
   @UseGuards(AccessTokenGuard)
   postPost(
     @User('id') userId: number,
-    @Body('title') title: string,
-    @Body('content') content: string,
+    @Body() body: CreatePostDto,
+    // @Body('title') title: string,
+    // @Body('content') content: string,
   ): Promise<PostsModule> {
     const authorId = userId;
-    return this.postsService.createPost(authorId, title, content);
+    return this.postsService.createPost(authorId, body);
   }
 
   /**
-   * Put /posts/:id
+   * Patch /posts/:id
    * 포스트를 수정하는 API
    */
-  @Put(':id')
-  putPost(
+  @Patch(':id')
+  PatchPost(
     @Param('id', ParseIntPipe) id: number,
-    @Body('title') title?: string,
-    @Body('content') content?: string,
+    @Body() body: UpdatePostDto,
   ): Promise<PostsModule> {
-    return this.postsService.updatePost(id, title, content);
+    return this.postsService.updatePost(id, body);
   }
 
   /**

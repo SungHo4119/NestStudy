@@ -6,6 +6,7 @@ import {
   JWT_ACCESS_EXPIRATION,
   JWT_REFRESH_EXPIRATION,
 } from 'src/auth/const/auth.const';
+import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
 
@@ -196,7 +197,8 @@ export class AuthService {
   }
 
   async registerWithEmail(
-    user: Pick<UsersModel, 'nickname' | 'email' | 'password'>,
+    // user: Pick<UsersModel, 'nickname' | 'email' | 'password'>,
+    user: RegisterUserDto,
   ) {
     const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
 
