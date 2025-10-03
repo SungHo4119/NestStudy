@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Module,
+  ValidationPipe,
+} from '@nestjs/common';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostsModel } from 'src/posts/entities/post.entity';
 import { AppController } from './app.controller';
@@ -34,7 +39,17 @@ import { UsersModule } from './users/users.module';
     CommonModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+  ],
 })
 // AppModule로 부터 모듈의 확장( import )를 하고
 // main.ts의 NestFactory.create(AppMoudule); 에서 서버를 실행

@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsEmail, IsString, Length } from 'class-validator';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { emailValidationMessage } from 'src/common/validation-message/email-validation.message';
@@ -10,6 +11,7 @@ import { RolesEnum } from '../const/roles.const';
 @Entity()
 @Unique(['email'])
 @Unique(['nickname'])
+// @Exclude()
 export class UsersModel extends BaseModel {
   @Column({
     length: 20,
@@ -26,6 +28,22 @@ export class UsersModel extends BaseModel {
   @Column()
   @IsString({ message: stringValidationMessage })
   @Length(3, 20, { message: lengthValidationMessage })
+  /**
+   * Request
+   * fronted -> backend
+   * plain object (JSON) -> class instance (DTO)
+   *
+   * Response
+   * backend -> frontend
+   * class instance (DTO) -> plain object (JSON)
+   *
+   * toClassOnly -> class instance로 변환 될 때만
+   * toPlainOnly -> plain object로 변환 될 때만
+   */
+  @Exclude({
+    // 응답에서만 제외하기 위해 사용
+    toPlainOnly: true,
+  })
   password: string;
 
   @Column({
@@ -36,4 +54,9 @@ export class UsersModel extends BaseModel {
 
   @OneToMany(() => PostsModel, (post) => post.author)
   posts: PostsModel[];
+
+  // @Expose()
+  // get nickNameAndEmail() {
+  //   return this.nickname + '/' + this.email;
+  // }
 }
