@@ -1,9 +1,5 @@
-import {
-  ClassSerializerInterceptor,
-  Module,
-  ValidationPipe,
-} from '@nestjs/common';
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostsModel } from 'src/posts/entities/post.entity';
 import { AppController } from './app.controller';
@@ -44,10 +40,6 @@ import { UsersModule } from './users/users.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
-    },
-    {
-      provide: APP_PIPE,
-      useClass: ValidationPipe,
     },
   ],
 })

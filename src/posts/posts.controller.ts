@@ -7,10 +7,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { CreatePostDto } from 'src/posts/dto/create-post.dto';
+import { PaginatePostsDto } from 'src/posts/dto/paginate-post.dto';
 import { UpdatePostDto } from 'src/posts/dto/update-post.dto';
 import { PostsModule } from 'src/posts/posts.module';
 import { User } from 'src/users/decorator/user.decorator';
@@ -28,8 +30,17 @@ export class PostsController {
    * 모든 포스트를 가져오는 API
    */
   @Get('')
-  getPosts(): Promise<PostsModule[]> {
-    return this.postsService.getAllPosts();
+  async getPosts(
+    @Query() query: PaginatePostsDto,
+  ): Promise<{ data: PostsModule[] }> {
+    // return this.postsService.getAllPosts();
+    return await this.postsService.paginatePosts(query);
+  }
+
+  @Post('random')
+  @UseGuards(AccessTokenGuard)
+  async generatePosts(@User('id') userId: number): Promise<void> {
+    await this.postsService.generatePost(userId);
   }
 
   /**
@@ -37,8 +48,8 @@ export class PostsController {
    * 특정 포스트를 가져오는 API
    */
   @Get(':id')
-  getPost(@Param('id', ParseIntPipe) id: number): Promise<PostsModule> {
-    return this.postsService.getPostById(id);
+  async getPost(@Param('id', ParseIntPipe) id: number): Promise<PostsModule> {
+    return await this.postsService.getPostById(id);
   }
   /**
    * Post /posts
@@ -46,14 +57,14 @@ export class PostsController {
    */
   @Post()
   @UseGuards(AccessTokenGuard)
-  postPost(
+  async postPost(
     @User('id') userId: number,
     @Body() body: CreatePostDto,
     // @Body('title') title: string,
     // @Body('content') content: string,
   ): Promise<PostsModule> {
     const authorId = userId;
-    return this.postsService.createPost(authorId, body);
+    return await this.postsService.createPost(authorId, body);
   }
 
   /**
@@ -61,11 +72,11 @@ export class PostsController {
    * 포스트를 수정하는 API
    */
   @Patch(':id')
-  PatchPost(
+  async patchPost(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdatePostDto,
   ): Promise<PostsModule> {
-    return this.postsService.updatePost(id, body);
+    return await this.postsService.updatePost(id, body);
   }
 
   /**
@@ -74,7 +85,7 @@ export class PostsController {
    */
 
   @Delete(':id')
-  deletePost(@Param('id', ParseIntPipe) id: number): Promise<number> {
-    return this.postsService.deletePost(id);
+  async deletePost(@Param('id', ParseIntPipe) id: number): Promise<number> {
+    return await this.postsService.deletePost(id);
   }
 }
