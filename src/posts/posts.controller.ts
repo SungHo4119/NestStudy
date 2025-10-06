@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -64,10 +63,10 @@ export class PostsController {
     @Body() body: CreatePostDto,
     // @Body('title') title: string,
     // @Body('content') content: string,
-    @UploadedFile() file?: Express.Multer.File,
   ): Promise<PostsModule> {
-    const authorId = userId;
-    return await this.postsService.createPost(authorId, body, file?.filename);
+    await this.postsService.createPostImage(body);
+
+    return await this.postsService.createPost(userId, body);
   }
 
   /**

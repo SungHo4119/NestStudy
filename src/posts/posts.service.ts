@@ -1,6 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { promises } from 'fs';
+import { basename, join } from 'path';
 import { CommonService } from 'src/common/common.service';
+import { POST_IMAGE_PATH, TEMP_FOLDER_PATH } from 'src/common/const/path.const';
 import { CreatePostDto } from 'src/posts/dto/create-post.dto';
 import { PaginatePostsDto } from 'src/posts/dto/paginate-post.dto';
 import { UpdatePostDto } from 'src/posts/dto/update-post.dto';
@@ -91,16 +98,14 @@ export class PostsService {
   }
 
   async createPost(
-    authorId: number,
+    userId: number,
     postDto: CreatePostDto,
-    image?: string,
   ): Promise<PostsModel> {
     const post: PostsModel = this.postsRepository.create({
       author: {
-        id: authorId,
+        id: userId,
       },
       ...postDto,
-      image: image,
       likeCount: 0,
       commentCount: 0,
     });
@@ -151,5 +156,32 @@ export class PostsService {
     await this.postsRepository.delete(id);
 
     return id;
+  }
+
+  async createPostImage(dto: CreatePostDto) {
+    if (!dto.image) {
+      return false;
+    }
+
+    // dto에 이미지 이름을 기반으로 파일의 경로를 생성한다.
+    const tempFilePath = join(TEMP_FOLDER_PATH, dto.image);
+
+    try {
+      // 파일이 존재하는지 확인
+      await promises.access(tempFilePath);
+    } catch {
+      throw new BadRequestException('존재하지 않은 파일 입니다.');
+    }
+
+    // 파일이름가져오기
+    // /User/aaa/bbb/ccc/ddd.jpg => ddd.jpg
+    const fileName = basename(tempFilePath);
+
+    // 이동할 Post 폴더의 경로
+    const newPath = join(POST_IMAGE_PATH, fileName);
+
+    await promises.rename(tempFilePath, newPath);
+
+    return true;
   }
 }
