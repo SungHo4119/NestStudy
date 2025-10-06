@@ -149,8 +149,8 @@ export class AuthService {
 
     return this.jwtService.sign(payload, {
       expiresIn: isRefreshToken
-        ? this.configService.get(ENV_JWT_REFRESH_EXPIRATION)
-        : this.configService.get(ENV_JWT_ACCESS_EXPIRATION),
+        ? this.configService.get<string>(ENV_JWT_REFRESH_EXPIRATION) + 's'
+        : this.configService.get<string>(ENV_JWT_ACCESS_EXPIRATION) + 's',
     });
   }
 
