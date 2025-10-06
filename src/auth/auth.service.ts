@@ -1,12 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import {
-  HASH_ROUNDS,
-  JWT_ACCESS_EXPIRATION,
-  JWT_REFRESH_EXPIRATION,
-} from 'src/auth/const/auth.const';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
+import {
+  ENV_HASH_ROUNDS,
+  ENV_JWT_ACCESS_EXPIRATION,
+  ENV_JWT_REFRESH_EXPIRATION,
+} from 'src/common/const/env-keys.const';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
 
@@ -15,6 +16,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {}
   /**
    * 토큰을 사용하게 되는 방식
@@ -147,8 +149,8 @@ export class AuthService {
 
     return this.jwtService.sign(payload, {
       expiresIn: isRefreshToken
-        ? JWT_REFRESH_EXPIRATION
-        : JWT_ACCESS_EXPIRATION,
+        ? this.configService.get(ENV_JWT_REFRESH_EXPIRATION)
+        : this.configService.get(ENV_JWT_ACCESS_EXPIRATION),
     });
   }
 
@@ -200,7 +202,10 @@ export class AuthService {
     // user: Pick<UsersModel, 'nickname' | 'email' | 'password'>,
     user: RegisterUserDto,
   ) {
-    const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
+    const hash = await bcrypt.hash(
+      user.password,
+      parseInt(this.configService.get(ENV_HASH_ROUNDS).toString()),
+    );
 
     const newUser = await this.usersService.createUser({
       ...user,

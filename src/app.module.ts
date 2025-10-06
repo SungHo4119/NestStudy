@@ -1,6 +1,13 @@
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  ENV_DB_HOST,
+  ENV_DB_PASSWORD,
+  ENV_DB_PORT,
+  ENV_DB_USERNAME,
+} from 'src/common/const/env-keys.const';
 import { PostsModel } from 'src/posts/entities/post.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -14,20 +21,28 @@ import { UsersModule } from './users/users.module';
 @Module({
   // 다른 모듈을 불러올 때 사용
   imports: [
+    //@nestjs/config 설치시
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+
     // TypeORM 테스트를 위한 모델
     TypeOrmModule.forFeature([]),
     // TypeOrmModule @nestjs/typeorm
     // forRoot는 TypeORM - DB연결을 사용할때 사용
-    TypeOrmModule.forRoot({
-      // 데이터 베이스 타입
-      type: 'postgres',
-      host: '127.0.0.1',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      entities: [PostsModel, UsersModel],
-      // 개발시 true - 동기화 옵션(entities에 따라 테이블 바뀜)
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>(ENV_DB_HOST),
+        port: configService.get<number>(ENV_DB_PORT),
+        username: configService.get<string>(ENV_DB_USERNAME),
+        password: configService.get<string>(ENV_DB_PASSWORD),
+        entities: [PostsModel, UsersModel],
+        // 개발시 true - 동기화 옵션(entities에 따라 테이블 바뀜)
+        synchronize: true,
+      }),
     }),
     PostsModule,
     UsersModule,

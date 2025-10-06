@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { HOST, PORT, PROTOCOL } from 'src/common/const/env.const';
+import { ConfigService } from '@nestjs/config';
+import { ENV_PROTOCOL } from 'src/common/const/env-keys.const';
 import { FILTER_MAPPER } from 'src/common/const/filter-mapper.const';
 import { BasePaginationDto } from 'src/common/dto/base-pagination.dto';
 import { BaseModel } from 'src/common/entity/base.entity';
@@ -13,6 +14,7 @@ import {
 
 @Injectable()
 export class CommonService {
+  constructor(private readonly configService: ConfigService) {}
   async paginate<T extends BaseModel>(
     dto: BasePaginationDto,
     repository: Repository<T>,
@@ -65,8 +67,12 @@ export class CommonService {
         ? results[results.length - 1]
         : null;
 
+    const protocol = this.configService.get(ENV_PROTOCOL);
+    const host = this.configService.get(ENV_PROTOCOL);
+    const port = this.configService.get(ENV_PROTOCOL);
+
     const nextUrl =
-      lastItem && new URL(`${PROTOCOL}://${HOST}:${PORT}/${path}`);
+      lastItem && new URL(`${protocol}://${host}:${port}/${path}`);
 
     if (nextUrl) {
       for (const [key, value] of Object.entries(dto)) {

@@ -1,0 +1,12 @@
+export const ENV_JWT_SECRET = 'JWT_SECRET';
+export const ENV_JWT_ACCESS_EXPIRATION = 'JWT_ACCESS_EXPIRATION';
+export const ENV_JWT_REFRESH_EXPIRATION = 'JWT_REFRESH_EXPIRATION';
+export const ENV_HASH_ROUNDS = 'HASH_ROUNDS';
+export const ENV_PROTOCOL = 'PROTOCOL';
+export const ENV_HOST = 'HOST';
+export const ENV_PORT = 'PORT';
+export const ENV_DB_HOST = 'DB_HOST';
+export const ENV_DB_PORT = 'DB_PORT';
+export const ENV_DB_USERNAME = 'DB_USERNAME';
+export const ENV_DB_PASSWORD = 'DB_PASSWORD';
+export const ENV_DB_DATABSE = 'DB_DATABSE';
