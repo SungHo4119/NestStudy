@@ -137,3 +137,8 @@ dist
 
 # Postgres data files
 postgres-data/
+
+# FileUpload
+public/**/*.png
+public/**/*.jpg
+public/**/*.jpeg
