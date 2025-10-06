@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
+import { CommonModule } from 'src/common/common.module';
 import { PostsModel } from 'src/posts/entities/post.entity';
+
 import { UsersModule } from 'src/users/users.module';
 import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
@@ -12,6 +14,7 @@ import { PostsService } from './posts.service';
     TypeOrmModule.forFeature([PostsModel]),
     AuthModule,
     UsersModule,
+    CommonModule,
   ],
   // Module에 Controller를 등록하면 Path가 NestJS에 등록되어 요청을 전달 받을 수있음
   controllers: [PostsController],

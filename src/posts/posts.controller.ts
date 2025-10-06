@@ -30,9 +30,7 @@ export class PostsController {
    * 모든 포스트를 가져오는 API
    */
   @Get('')
-  async getPosts(
-    @Query() query: PaginatePostsDto,
-  ): Promise<{ data: PostsModule[] }> {
+  async getPosts(@Query() query: PaginatePostsDto) {
     // return this.postsService.getAllPosts();
     return await this.postsService.paginatePosts(query);
   }

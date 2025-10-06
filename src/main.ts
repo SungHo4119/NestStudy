@@ -16,6 +16,10 @@ async function bootstrap() {
         // DTO에서 @Type(() => Number)와 같은 데코레이터를 사용하지 않아도 자동으로 하위에 적용된 IsNumber, IsString 등의 데코레이터를 보고 형변환을 수행
         enableImplicitConversion: true,
       },
+      // DTO에 정의되어있지 않은 다른 값을 제거 ( class-validator )
+      whitelist: true,
+      // whitelist에 정의되지 않은 다른 값이 넘어오는 경우 오류로 응답
+      forbidNonWhitelisted: true,
     }),
   );
   // app.useGlobalPipes(new ValidationPipe());

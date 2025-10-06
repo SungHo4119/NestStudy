@@ -1,28 +1,12 @@
-import { IsIn, IsNumber, IsOptional } from 'class-validator';
-import { OrderBy } from 'src/common/type/pagination.type';
-import { inValidationMessage } from 'src/common/validation-message/in-validation.message';
-import { numberValidationMessage } from 'src/common/validation-message/number-validation.message';
+import { IsNumber, IsOptional } from 'class-validator';
+import { BasePaginationDto } from 'src/common/dto/base-pagination.dto';
 
-export class PaginatePostsDto {
-  @IsNumber(undefined, { message: numberValidationMessage })
+export class PaginatePostsDto extends BasePaginationDto {
+  @IsNumber()
   @IsOptional()
-  page?: number;
+  where__likeCount__more_than: number;
 
-  // @Type(() => Number)
-  @IsNumber(undefined, { message: numberValidationMessage })
+  @IsNumber()
   @IsOptional()
-  where__id_more_then?: number;
-
-  @IsNumber(undefined, { message: numberValidationMessage })
-  @IsOptional()
-  where__id_less_then?: number;
-
-  @IsIn([OrderBy.ASC, OrderBy.DESC], { message: inValidationMessage })
-  @IsOptional()
-  order__createdAt?: OrderBy = OrderBy.ASC;
-
-  // @Type(() => Number)
-  @IsNumber(undefined, { message: numberValidationMessage })
-  @IsOptional()
-  take: number = 20;
+  where__title__i_like: number;
 }

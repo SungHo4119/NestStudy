@@ -4,6 +4,6 @@ export const enum OrderBy {
 }
 
 export const enum PaginationID {
-  MORE_THAN = 'where__id_more_then',
-  LESS_THAN = 'where__id_less_then',
+  MORE_THAN = 'where__id__more_than',
+  LESS_THAN = 'where__id__less_than',
 }
