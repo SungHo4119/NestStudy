@@ -4,7 +4,7 @@ import { BaseModel } from 'src/common/entity/base.entity';
 import { emailValidationMessage } from 'src/common/validation-message/email-validation.message';
 import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
-import { PostsModel } from 'src/posts/entities/post.entity';
+import { PostsModel } from 'src/posts/entity/post.entity';
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
 

@@ -1,18 +1,13 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { promises } from 'fs';
-import { basename, join } from 'path';
 import { CommonService } from 'src/common/common.service';
-import { POST_IMAGE_PATH, TEMP_FOLDER_PATH } from 'src/common/const/path.const';
+import { ImageModel } from 'src/common/entity/image.entity';
+import { DEFAULT_POST_FIND_OPTIONS } from 'src/posts/const/default-post-find-options.const';
 import { CreatePostDto } from 'src/posts/dto/create-post.dto';
 import { PaginatePostsDto } from 'src/posts/dto/paginate-post.dto';
 import { UpdatePostDto } from 'src/posts/dto/update-post.dto';
-import { PostsModel } from 'src/posts/entities/post.entity';
-import { Repository } from 'typeorm';
+import { PostsModel } from 'src/posts/entity/post.entity';
+import { QueryRunner, Repository } from 'typeorm';
 // Injectable: 주입 할 수 있다.
 // module에 사용하기 위해서는 @Injectable()을 작성 해 주어야한다.
 @Injectable()
@@ -21,8 +16,16 @@ export class PostsService {
     // @nestjs/typeorm
     @InjectRepository(PostsModel)
     private readonly postsRepository: Repository<PostsModel>,
+    @InjectRepository(ImageModel)
+    private readonly imageRepository: Repository<ImageModel>,
     private readonly commonService: CommonService,
   ) {}
+
+  getRepository(qr?: QueryRunner) {
+    return qr
+      ? qr.manager.getRepository<PostsModel>(PostsModel)
+      : this.postsRepository;
+  }
 
   /**
    *
@@ -43,11 +46,11 @@ export class PostsService {
     //   return this.pagePaginatePosts(dto);
     // }
     // return this.cursorPaginatePosts(dto);
-    return this.commonService.paginate(
+    return await this.commonService.paginate(
       dto,
       this.postsRepository,
       {
-        relations: ['author'],
+        ...DEFAULT_POST_FIND_OPTIONS,
       },
       'posts',
     );
@@ -72,13 +75,14 @@ export class PostsService {
       await this.createPost(userId, {
         title: `Post ${i}`,
         content: `Content for post ${i}`,
+        images: [],
       });
     }
   }
 
   async getAllPosts(): Promise<PostsModel[]> {
     const posts = await this.postsRepository.find({
-      relations: ['author'],
+      ...DEFAULT_POST_FIND_OPTIONS,
     });
     return posts;
   }
@@ -86,7 +90,7 @@ export class PostsService {
   async getPostById(id: number): Promise<PostsModel> {
     const post = await this.postsRepository.findOne({
       where: { id },
-      relations: ['author'],
+      ...DEFAULT_POST_FIND_OPTIONS,
     });
 
     if (!post) {
@@ -100,12 +104,15 @@ export class PostsService {
   async createPost(
     userId: number,
     postDto: CreatePostDto,
+    qr?: QueryRunner,
   ): Promise<PostsModel> {
-    const post: PostsModel = this.postsRepository.create({
+    const repository = this.getRepository(qr);
+    const post: PostsModel = repository.create({
       author: {
         id: userId,
       },
       ...postDto,
+      images: [],
       likeCount: 0,
       commentCount: 0,
     });
@@ -113,7 +120,7 @@ export class PostsService {
     // save의 기능
     // 1) id값이 같은 데이터가(혹은 id값이 없는경우) 존재하지 않는다면 새로 생성한다.
     // 2) id값이 존재하고 같은 id값을 가진 데이터가 존재한다면 객체를 저장한다.
-    const newPost = await this.postsRepository.save(post);
+    const newPost = await repository.save(post);
     return newPost;
   }
 
@@ -124,7 +131,7 @@ export class PostsService {
       where: {
         id,
       },
-      relations: ['author'],
+      ...DEFAULT_POST_FIND_OPTIONS,
     });
 
     if (!post) {
@@ -156,32 +163,5 @@ export class PostsService {
     await this.postsRepository.delete(id);
 
     return id;
-  }
-
-  async createPostImage(dto: CreatePostDto) {
-    if (!dto.image) {
-      return false;
-    }
-
-    // dto에 이미지 이름을 기반으로 파일의 경로를 생성한다.
-    const tempFilePath = join(TEMP_FOLDER_PATH, dto.image);
-
-    try {
-      // 파일이 존재하는지 확인
-      await promises.access(tempFilePath);
-    } catch {
-      throw new BadRequestException('존재하지 않은 파일 입니다.');
-    }
-
-    // 파일이름가져오기
-    // /User/aaa/bbb/ccc/ddd.jpg => ddd.jpg
-    const fileName = basename(tempFilePath);
-
-    // 이동할 Post 폴더의 경로
-    const newPath = join(POST_IMAGE_PATH, fileName);
-
-    await promises.rename(tempFilePath, newPath);
-
-    return true;
   }
 }

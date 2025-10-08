@@ -10,7 +10,8 @@ import {
   ENV_DB_USERNAME,
 } from 'src/common/const/env-keys.const';
 import { PUBLIC_FOLDER_PATH } from 'src/common/const/path.const';
-import { PostsModel } from 'src/posts/entities/post.entity';
+import { ImageModel } from 'src/common/entity/image.entity';
+import { PostsModel } from 'src/posts/entity/post.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -44,7 +45,7 @@ import { UsersModule } from './users/users.module';
         port: configService.get<number>(ENV_DB_PORT),
         username: configService.get<string>(ENV_DB_USERNAME),
         password: configService.get<string>(ENV_DB_PASSWORD),
-        entities: [PostsModel, UsersModel],
+        entities: [PostsModel, UsersModel, ImageModel],
         // 개발시 true - 동기화 옵션(entities에 따라 테이블 바뀜)
         synchronize: true,
       }),

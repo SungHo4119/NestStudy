@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  InternalServerErrorException,
   Param,
   ParseIntPipe,
   Patch,
@@ -13,11 +14,14 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { ImageModelType } from 'src/common/entity/image.entity';
 import { CreatePostDto } from 'src/posts/dto/create-post.dto';
 import { PaginatePostsDto } from 'src/posts/dto/paginate-post.dto';
 import { UpdatePostDto } from 'src/posts/dto/update-post.dto';
+import { PostImagesService } from 'src/posts/image/images.service';
 import { PostsModule } from 'src/posts/posts.module';
 import { User } from 'src/users/decorator/user.decorator';
+import { DataSource } from 'typeorm';
 import { PostsService } from './posts.service';
 
 // nest g resource 를 이용해서 모듈을 생성 할 수 있다.
@@ -25,7 +29,13 @@ import { PostsService } from './posts.service';
 @Controller('posts')
 export class PostsController {
   // postsService의 객체는 NestJS의 IoC Container에서 가져온다.
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    // nestJS에서 Inject해줌
+    private readonly dataSource: DataSource,
+
+    private readonly postImageService: PostImagesService,
+  ) {}
 
   /**
    * GET /posts
@@ -63,10 +73,38 @@ export class PostsController {
     @Body() body: CreatePostDto,
     // @Body('title') title: string,
     // @Body('content') content: string,
-  ): Promise<PostsModule> {
-    await this.postsService.createPostImage(body);
+  ) {
+    // queryRunner를 생성한다.
+    const qr = this.dataSource.createQueryRunner();
 
-    return await this.postsService.createPost(userId, body);
+    // queryRunner에 연결한다.
+    await qr.connect();
+
+    await qr.startTransaction();
+
+    try {
+      const post = await this.postsService.createPost(userId, body, qr);
+
+      for (let i = 0; i < body.images.length; i++) {
+        await this.postImageService.createPostImage(
+          {
+            post,
+            order: i,
+            path: body.images[i],
+            type: ImageModelType.POST_IMAGE,
+          },
+          qr,
+        );
+      }
+
+      await qr.commitTransaction();
+      await qr.release();
+      return this.postsService.getPostById(post.id);
+    } catch (e) {
+      await qr.rollbackTransaction();
+      await qr.release();
+      throw new InternalServerErrorException(e.message);
+    }
   }
 
   /**
