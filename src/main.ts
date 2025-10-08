@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { AppModule } from './app.module';
 
 // nextjs를 시작하는 파일
@@ -23,6 +24,8 @@ async function bootstrap() {
     }),
   );
   // app.useGlobalPipes(new ValidationPipe());
+
+  app.useGlobalInterceptors(new LogInterceptor());
 
   await app.listen(process.env.PORT ?? 3000);
 }
