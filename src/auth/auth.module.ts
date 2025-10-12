@@ -19,7 +19,7 @@ import { AuthService } from './auth.service';
         secret: configService.get<string>(ENV_JWT_SECRET),
         signOptions: {
           // 환경변수에서 만료 시간 가져오기
-          expiresIn: configService.get<string>(ENV_JWT_ACCESS_EXPIRATION),
+          expiresIn: configService.get<number>(ENV_JWT_ACCESS_EXPIRATION),
         },
       }),
     }),
