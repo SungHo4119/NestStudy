@@ -1,0 +1,19 @@
+import { IsString } from 'class-validator';
+import { ChatsModel } from 'src/chats/entities/chat.entity';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
+import { UsersModel } from 'src/users/entities/users.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
+
+@Entity()
+export class MessagesModel extends BaseModel {
+  @ManyToOne(() => ChatsModel, (chat) => chat.messages)
+  chat: ChatsModel;
+
+  @ManyToOne(() => UsersModel, (user) => user.messages)
+  author: UsersModel;
+
+  @Column()
+  @IsString({ message: stringValidationMessage })
+  message: string;
+}

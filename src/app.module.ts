@@ -9,6 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChatsModel } from 'src/chats/entities/chat.entity';
+import { MessagesModel } from 'src/chats/messages/entity/messages.entity';
 import {
   ENV_DB_HOST,
   ENV_DB_PASSWORD,
@@ -22,11 +24,11 @@ import { PostsModel } from 'src/posts/entity/post.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { ChatsModule } from './chats/chats.module';
 import { CommonModule } from './common/common.module';
 import { PostsModule } from './posts/posts.module';
 import { UsersModel } from './users/entities/users.entity';
 import { UsersModule } from './users/users.module';
-import { ChatsModule } from './chats/chats.module';
 
 // NestJS의 모듈을 정의하는 파일 ( 의존성 정의 )
 @Module({
@@ -53,7 +55,13 @@ import { ChatsModule } from './chats/chats.module';
         port: configService.get<number>(ENV_DB_PORT),
         username: configService.get<string>(ENV_DB_USERNAME),
         password: configService.get<string>(ENV_DB_PASSWORD),
-        entities: [PostsModel, UsersModel, ImageModel],
+        entities: [
+          PostsModel,
+          UsersModel,
+          ImageModel,
+          ChatsModel,
+          MessagesModel,
+        ],
         // 개발시 true - 동기화 옵션(entities에 따라 테이블 바뀜)
         synchronize: true,
       }),

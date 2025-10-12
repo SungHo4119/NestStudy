@@ -1,11 +1,21 @@
 import { Exclude } from 'class-transformer';
 import { IsEmail, IsString, Length } from 'class-validator';
+import { ChatsModel } from 'src/chats/entities/chat.entity';
+import { MessagesModel } from 'src/chats/messages/entity/messages.entity';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { emailValidationMessage } from 'src/common/validation-message/email-validation.message';
 import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { PostsModel } from 'src/posts/entity/post.entity';
-import { Column, Entity, OneToMany, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  Unique,
+} from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
 
 @Entity()
@@ -59,4 +69,11 @@ export class UsersModel extends BaseModel {
   // get nickNameAndEmail() {
   //   return this.nickname + '/' + this.email;
   // }
+
+  @ManyToMany(() => ChatsModel, (chat) => chat.users)
+  @JoinTable()
+  chats: ChatsModel[];
+
+  @ManyToOne(() => MessagesModel, (message) => message.author)
+  messages: MessagesModel[];
 }
