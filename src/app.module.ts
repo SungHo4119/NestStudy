@@ -1,4 +1,10 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -11,6 +17,7 @@ import {
 } from 'src/common/const/env-keys.const';
 import { PUBLIC_FOLDER_PATH } from 'src/common/const/path.const';
 import { ImageModel } from 'src/common/entity/image.entity';
+import { LogMiddleware } from 'src/common/middleware/log.middleware';
 import { PostsModel } from 'src/posts/entity/post.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -66,4 +73,12 @@ import { UsersModule } from './users/users.module';
 })
 // AppModule로 부터 모듈의 확장( import )를 하고
 // main.ts의 NestFactory.create(AppMoudule); 에서 서버를 실행
-export class AppModule {}
+// 모든 요청에 대해 LogMiddleware가 실행되도록 설정
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LogMiddleware).forRoutes({
+      path: '*',
+      method: RequestMethod.ALL,
+    });
+  }
+}

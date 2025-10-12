@@ -18,8 +18,8 @@ import { TransactionInterceptor } from 'src/common/interceptor/transaction.inter
 import { CreatePostDto } from 'src/posts/dto/create-post.dto';
 import { PaginatePostsDto } from 'src/posts/dto/paginate-post.dto';
 import { UpdatePostDto } from 'src/posts/dto/update-post.dto';
+import { PostsModel } from 'src/posts/entity/post.entity';
 import { PostImagesService } from 'src/posts/image/images.service';
-import { PostsModule } from 'src/posts/posts.module';
 import { User } from 'src/users/decorator/user.decorator';
 import { DataSource, QueryRunner } from 'typeorm';
 import { PostsService } from './posts.service';
@@ -58,7 +58,7 @@ export class PostsController {
    * 특정 포스트를 가져오는 API
    */
   @Get(':id')
-  async getPost(@Param('id', ParseIntPipe) id: number): Promise<PostsModule> {
+  async getPost(@Param('id', ParseIntPipe) id: number): Promise<PostsModel> {
     return await this.postsService.getPostById(id);
   }
   /**
@@ -99,7 +99,7 @@ export class PostsController {
   async patchPost(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdatePostDto,
-  ): Promise<PostsModule> {
+  ): Promise<PostsModel> {
     return await this.postsService.updatePost(id, body);
   }
 

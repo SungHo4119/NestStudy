@@ -25,3 +25,11 @@ import { PostsService } from './posts.service';
   providers: [PostsService, PostImagesService],
 })
 export class PostsModule {}
+// export class PostsModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(LogMiddleware).forRoutes({
+//       path: 'posts',
+//       method: RequestMethod.ALL,
+//     });
+//   }
+// }
