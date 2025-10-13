@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
@@ -18,6 +19,7 @@ import { CreatePostDto } from 'src/posts/dto/create-post.dto';
 import { PaginatePostsDto } from 'src/posts/dto/paginate-post.dto';
 import { UpdatePostDto } from 'src/posts/dto/update-post.dto';
 import { PostsModel } from 'src/posts/entity/post.entity';
+import { IsPostMineOrAdminGuard } from 'src/posts/guard/is-post-mine-or-admin.guard';
 import { PostImagesService } from 'src/posts/image/images.service';
 import { RolesEnum } from 'src/users/const/roles.const';
 import { Roles } from 'src/users/decorator/roles.decorator';
@@ -96,12 +98,13 @@ export class PostsController {
    * Patch /posts/:id
    * 포스트를 수정하는 API
    */
-  @Patch(':id')
+  @Patch(':postId')
+  @UseGuards(IsPostMineOrAdminGuard)
   async patchPost(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('postId', ParseIntPipe) postId: number,
     @Body() body: UpdatePostDto,
   ): Promise<PostsModel> {
-    return await this.postsService.updatePost(id, body);
+    return await this.postsService.updatePost(postId, body);
   }
 
   /**

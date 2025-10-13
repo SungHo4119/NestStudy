@@ -80,4 +80,18 @@ export class CommentsService {
     }
     await this.CommentsRepository.delete(commentId);
   }
+
+  async isCommentMine(userId: number, commentId: number) {
+    return await this.CommentsRepository.exists({
+      where: {
+        id: commentId,
+        author: {
+          id: userId,
+        },
+      },
+      relations: {
+        author: true,
+      },
+    });
+  }
 }
