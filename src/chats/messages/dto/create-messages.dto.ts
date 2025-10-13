@@ -6,7 +6,4 @@ import { numberValidationMessage } from 'src/common/validation-message/number-va
 export class CreateMessagesDto extends PickType(MessagesModel, ['message']) {
   @IsNumber({}, { message: numberValidationMessage })
   chatId: number;
-
-  @IsNumber({}, { message: numberValidationMessage })
-  authorId: number;
 }
