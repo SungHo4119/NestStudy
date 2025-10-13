@@ -18,6 +18,7 @@ import { PostsService } from './posts.service';
     UsersModule,
     CommonModule,
   ],
+  exports: [PostsService],
   // Module에 Controller를 등록하면 Path가 NestJS에 등록되어 요청을 전달 받을 수있음
   controllers: [PostsController],
   // PostsController에서 주입받을 클래스를 providers에 작성한다. ( 인스턴스화 하지 않고 사용 가능하다. )

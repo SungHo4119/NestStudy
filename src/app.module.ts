@@ -9,7 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ChatsModel } from 'src/chats/entities/chat.entity';
+import { ChatsModel } from 'src/chats/entity/chat.entity';
 import { MessagesModel } from 'src/chats/messages/entity/messages.entity';
 import {
   ENV_DB_HOST,
@@ -20,6 +20,8 @@ import {
 import { PUBLIC_FOLDER_PATH } from 'src/common/const/path.const';
 import { ImageModel } from 'src/common/entity/image.entity';
 import { LogMiddleware } from 'src/common/middleware/log.middleware';
+import { CommentsModule } from 'src/posts/comments/comments.module';
+import { CommentsModel } from 'src/posts/comments/entity/comment.entity';
 import { PostsModel } from 'src/posts/entity/post.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -27,7 +29,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChatsModule } from './chats/chats.module';
 import { CommonModule } from './common/common.module';
 import { PostsModule } from './posts/posts.module';
-import { UsersModel } from './users/entities/users.entity';
+import { UsersModel } from './users/entity/users.entity';
 import { UsersModule } from './users/users.module';
 
 // NestJS의 모듈을 정의하는 파일 ( 의존성 정의 )
@@ -61,8 +63,9 @@ import { UsersModule } from './users/users.module';
           ImageModel,
           ChatsModel,
           MessagesModel,
+          CommentsModel,
         ],
-        // 개발시 true - 동기화 옵션(entities에 따라 테이블 바뀜)
+        // 개발시 true - 동기화 옵션(entity에 따라 테이블 바뀜)
         synchronize: true,
       }),
     }),
@@ -71,6 +74,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     CommonModule,
     ChatsModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { ChatsController } from 'src/chats/chats.controller';
-import { ChatsModel } from 'src/chats/entities/chat.entity';
+import { ChatsModel } from 'src/chats/entity/chat.entity';
 import { MessagesController } from 'src/chats/messages/messages.controller';
 import { CommonModule } from 'src/common/common.module';
 import { UsersModule } from 'src/users/users.module';

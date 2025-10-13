@@ -2,7 +2,8 @@ import { IsString } from 'class-validator';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { ImageModel } from 'src/common/entity/image.entity';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { CommentsModel } from 'src/posts/comments/entity/comment.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
@@ -38,4 +39,7 @@ export class PostsModel extends BaseModel {
 
   @OneToMany(() => ImageModel, (image) => image.post)
   images: ImageModel[];
+
+  @OneToMany(() => CommentsModel, (comment) => comment.post)
+  comments: UsersModel[];
 }

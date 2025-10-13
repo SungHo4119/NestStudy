@@ -1,8 +1,8 @@
 import { IsString } from 'class-validator';
-import { ChatsModel } from 'src/chats/entities/chat.entity';
+import { ChatsModel } from 'src/chats/entity/chat.entity';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity()

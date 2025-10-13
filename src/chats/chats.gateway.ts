@@ -18,7 +18,7 @@ import { CreateMessagesDto } from 'src/chats/messages/dto/create-messages.dto';
 import { MessagesService } from 'src/chats/messages/messages.service';
 import { SocketCatchHttpExceptionFilter } from 'src/common/exception-filter/socket.catch.http.exception-filter';
 import { SocketValidationPipe } from 'src/common/pipe/validation.pipe';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 import { UsersService } from 'src/users/users.service';
 import { ChatsService } from './chats.service';
 

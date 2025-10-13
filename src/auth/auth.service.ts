@@ -8,7 +8,7 @@ import {
   ENV_JWT_ACCESS_EXPIRATION,
   ENV_JWT_REFRESH_EXPIRATION,
 } from 'src/common/const/env-keys.const';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
