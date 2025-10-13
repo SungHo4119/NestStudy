@@ -2,6 +2,7 @@ import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 import { BasicTokenGuard } from 'src/auth/guard/basic-token.guard';
 import { RefreshTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -9,6 +10,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('token/access')
+  @IsPublic()
   @UseGuards(RefreshTokenGuard)
   postAccessToken(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, true);
@@ -19,6 +21,7 @@ export class AuthController {
   }
 
   @Post('token/refresh')
+  @IsPublic()
   @UseGuards(RefreshTokenGuard)
   postRefreshToken(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, true);
@@ -29,6 +32,7 @@ export class AuthController {
   }
 
   @Post('login/email')
+  @IsPublic()
   @UseGuards(BasicTokenGuard)
   postLoginEmail(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, false);
@@ -39,6 +43,7 @@ export class AuthController {
   }
 
   @Post('register/email')
+  @IsPublic()
   postRegisterEmail(
     // @Body('nickname') nickname: string,
     // @Body('email') email: string,

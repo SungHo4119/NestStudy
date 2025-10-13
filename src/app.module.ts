@@ -6,9 +6,10 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { ChatsModel } from 'src/chats/entity/chat.entity';
 import { MessagesModel } from 'src/chats/messages/entity/messages.entity';
 import {
@@ -23,6 +24,7 @@ import { LogMiddleware } from 'src/common/middleware/log.middleware';
 import { CommentsModule } from 'src/posts/comments/comments.module';
 import { CommentsModel } from 'src/posts/comments/entity/comment.entity';
 import { PostsModel } from 'src/posts/entity/post.entity';
+import { RolesGuard } from 'src/users/guard/roles.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -82,6 +84,18 @@ import { UsersModule } from './users/users.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+    {
+      provide: APP_GUARD,
+      // 전역 Guard 설정
+      // Method에 적용된 Guard보다 먼저 실행되고,
+      // 따라서 AccessTokenGuard 보다 먼저 실행되어 항상오류로 응답하는 문제가있다.
+      //   => AccessTokenGuard을 전역으로 선언하고 Public 데코레이터를 만들어 해결
+      useClass: RolesGuard,
     },
   ],
 })

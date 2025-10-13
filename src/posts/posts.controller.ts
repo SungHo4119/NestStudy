@@ -8,10 +8,9 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { QueryRunnerTS } from 'src/common/decorator/query-runner.decorator';
 import { ImageModelType } from 'src/common/entity/image.entity';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -20,6 +19,8 @@ import { PaginatePostsDto } from 'src/posts/dto/paginate-post.dto';
 import { UpdatePostDto } from 'src/posts/dto/update-post.dto';
 import { PostsModel } from 'src/posts/entity/post.entity';
 import { PostImagesService } from 'src/posts/image/images.service';
+import { RolesEnum } from 'src/users/const/roles.const';
+import { Roles } from 'src/users/decorator/roles.decorator';
 import { User } from 'src/users/decorator/user.decorator';
 import { DataSource, QueryRunner } from 'typeorm';
 import { PostsService } from './posts.service';
@@ -42,13 +43,13 @@ export class PostsController {
    * 모든 포스트를 가져오는 API
    */
   @Get('')
+  @IsPublic()
   async getPosts(@Query() query: PaginatePostsDto) {
     // return this.postsService.getAllPosts();
     return await this.postsService.paginatePosts(query);
   }
 
   @Post('random')
-  @UseGuards(AccessTokenGuard)
   async generatePosts(@User('id') userId: number): Promise<void> {
     await this.postsService.generatePost(userId);
   }
@@ -58,6 +59,7 @@ export class PostsController {
    * 특정 포스트를 가져오는 API
    */
   @Get(':id')
+  @IsPublic()
   async getPost(@Param('id', ParseIntPipe) id: number): Promise<PostsModel> {
     return await this.postsService.getPostById(id);
   }
@@ -66,7 +68,6 @@ export class PostsController {
    * 포스트를 생성하는 API
    */
   @Post()
-  @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   async postPosts(
     @User('id') userId: number,
@@ -109,7 +110,8 @@ export class PostsController {
    */
 
   @Delete(':id')
-  async deletePost(@Param('id', ParseIntPipe) id: number): Promise<number> {
+  @Roles(RolesEnum.ADMIN)
+  async deletePost(@Param('id', ParseIntPipe) id: number) {
     return await this.postsService.deletePost(id);
   }
 }
