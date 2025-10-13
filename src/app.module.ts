@@ -24,6 +24,7 @@ import { LogMiddleware } from 'src/common/middleware/log.middleware';
 import { CommentsModule } from 'src/posts/comments/comments.module';
 import { CommentsModel } from 'src/posts/comments/entity/comment.entity';
 import { PostsModel } from 'src/posts/entity/post.entity';
+import { UserFollowersModel } from 'src/users/entity/user-followers.entity';
 import { RolesGuard } from 'src/users/guard/roles.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -66,6 +67,7 @@ import { UsersModule } from './users/users.module';
           ChatsModel,
           MessagesModel,
           CommentsModel,
+          UserFollowersModel,
         ],
         // 개발시 true - 동기화 옵션(entity에 따라 테이블 바뀜)
         synchronize: true,

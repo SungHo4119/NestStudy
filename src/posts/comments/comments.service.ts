@@ -6,7 +6,7 @@ import { CreatePostCommentDto } from 'src/posts/comments/dto/create-commentf.dto
 import { PaginateCommentsDto } from 'src/posts/comments/dto/paginate-comments.dto';
 import { CommentsModel } from 'src/posts/comments/entity/comment.entity';
 import { UsersModel } from 'src/users/entity/users.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
 @Injectable()
 export class CommentsService {
@@ -16,6 +16,12 @@ export class CommentsService {
 
     private readonly commonService: CommonService,
   ) {}
+
+  getRepository(qr?: QueryRunner) {
+    return qr
+      ? qr.manager.getRepository<CommentsModel>(CommentsModel)
+      : this.CommentsRepository;
+  }
 
   async PaginateComments(dto: PaginateCommentsDto, postId: number) {
     return await this.commonService.paginate(
@@ -47,8 +53,10 @@ export class CommentsService {
     postId: number,
     dto: CreatePostCommentDto,
     author: UsersModel,
+    qr?: QueryRunner,
   ) {
-    return this.CommentsRepository.save({
+    const repository = this.getRepository(qr);
+    return repository.save({
       ...dto,
       post: {
         id: postId,
@@ -72,13 +80,14 @@ export class CommentsService {
     return newComment;
   }
 
-  async deleteComment(commentId: number) {
-    const comment = await this.CommentsRepository.findOneBy({ id: commentId });
+  async deleteComment(commentId: number, qr?: QueryRunner) {
+    const repository = this.getRepository(qr);
+    const comment = await repository.findOneBy({ id: commentId });
 
     if (!comment) {
       throw new BadRequestException(`${commentId} 댓글이 존재하지 않습니다.`);
     }
-    await this.CommentsRepository.delete(commentId);
+    await repository.delete(commentId);
   }
 
   async isCommentMine(userId: number, commentId: number) {

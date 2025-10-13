@@ -1,6 +1,23 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Controller,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  Param,
+  ParseBoolPipe,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
+import { QueryRunnerTS } from 'src/common/decorator/query-runner.decorator';
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { RolesEnum } from 'src/users/const/roles.const';
 import { Roles } from 'src/users/decorator/roles.decorator';
+import { User } from 'src/users/decorator/user.decorator';
+import { UsersModel } from 'src/users/entity/users.entity';
+import { QueryRunner } from 'typeorm';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -32,5 +49,45 @@ export class UsersController {
    */
   getUsers() {
     return this.usersService.getAllUsers();
+  }
+
+  @Get('follow')
+  async getFollow(
+    @User() user: UsersModel,
+    @Query('includeConfirmed', new DefaultValuePipe(true), ParseBoolPipe)
+    includeConfirmed,
+  ) {
+    return this.usersService.getFollowers(user.id, includeConfirmed);
+  }
+
+  @Post('follow/:followeeId')
+  async postFollow(
+    @User() user: UsersModel,
+    @Param('followeeId', ParseIntPipe) followeeId: number,
+  ) {
+    return this.usersService.followUser(user.id, followeeId);
+  }
+
+  @Patch('follow/:followerId/confirm')
+  @UseInterceptors(TransactionInterceptor)
+  async patchFollowConfim(
+    @User() user: UsersModel,
+    @Param('followerId', ParseIntPipe) followerId: number,
+    @QueryRunnerTS() qr: QueryRunner,
+  ) {
+    await this.usersService.confirmFollow(followerId, user.id, qr);
+    await this.usersService.incrementFollowerCount(user.id, qr);
+    return true;
+  }
+
+  @Delete('follow/:followeeId')
+  async deleteFollow(
+    @User() user: UsersModel,
+    @Param('followeeId', ParseIntPipe) followeeId: number,
+    @QueryRunnerTS() qr: QueryRunner,
+  ) {
+    await this.usersService.deleteFollow(user.id, followeeId, qr);
+    await this.usersService.decrementFollowerCount(user.id, qr);
+    return true;
   }
 }

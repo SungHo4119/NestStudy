@@ -8,6 +8,7 @@ import { lengthValidationMessage } from 'src/common/validation-message/length-va
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { CommentsModel } from 'src/posts/comments/entity/comment.entity';
 import { PostsModel } from 'src/posts/entity/post.entity';
+import { UserFollowersModel } from 'src/users/entity/user-followers.entity';
 import {
   Column,
   Entity,
@@ -80,4 +81,22 @@ export class UsersModel extends BaseModel {
 
   @OneToMany(() => CommentsModel, (comment) => comment.author)
   postComments: CommentsModel[];
+
+  @OneToMany(() => UserFollowersModel, (ufm) => ufm.follower)
+  @JoinTable()
+  followers: UserFollowersModel[];
+
+  @OneToMany(() => UserFollowersModel, (ufm) => ufm.followee)
+  @JoinTable()
+  followees: UserFollowersModel[];
+
+  @Column({
+    default: 0,
+  })
+  followerCount: number;
+
+  @Column({
+    default: 0,
+  })
+  followeeCount: number;
 }
